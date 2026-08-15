@@ -845,7 +845,7 @@ documents/Patent-Document.docx
 
 **Mohammed Habib Qureshi**
 
-Internet of Things
+Bachelor of Technology | Internet of Things
 
 ---
 
