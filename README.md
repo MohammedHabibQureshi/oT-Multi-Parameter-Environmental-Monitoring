@@ -46,7 +46,7 @@ The main objectives of this project are:
 
 # 🏗️ System Architecture
 
-![System Architecture]<img width="1024" height="559" alt="sys archi" src="https://github.com/user-attachments/assets/67a52613-0351-4e7d-b0f4-1fec82bcdd3d" />
+<img width="1024" height="559" alt="sys archi" src="https://github.com/user-attachments/assets/67a52613-0351-4e7d-b0f4-1fec82bcdd3d" />
 
 
 ### System Architecture Flow
@@ -246,7 +246,7 @@ BMP280
 
 # 🔗 Hardware Block Diagram
 
-![Hardware Block Diagram]<img width="576" height="391" alt="hardware" src="https://github.com/user-attachments/assets/cf922f65-5a4c-4ea8-8d2a-76df520b60c4" />
+<img width="576" height="391" alt="hardware" src="https://github.com/user-attachments/assets/cf922f65-5a4c-4ea8-8d2a-76df520b60c4" />
 
 
 The hardware block diagram represents the connection between the environmental sensors and the ESP32 processing unit.
@@ -338,14 +338,10 @@ Data uploaded successfully
 
 The exact output depends on the firmware implementation.
 
-### Serial Monitor
+### Serial Monitor & Arduino IDE Output
 
-![Serial Monitor]<img width="576" height="405" alt="Serial monitor" src="https://github.com/user-attachments/assets/bc061944-a9dd-491f-a199-f82c8f9d6eb5" />
+<img width="576" height="405" alt="Serial monitor" src="https://github.com/user-attachments/assets/bc061944-a9dd-491f-a199-f82c8f9d6eb5" />
 
-
-### Arduino IDE Output
-
-![Arduino IDE Output]
 
 ---
 
@@ -362,12 +358,12 @@ The dashboard can be used to monitor:
 
 ### ThingSpeak Dashboard
 
-![ThingSpeak Dashboard]<img width="575" height="245" alt="Dashboard" src="https://github.com/user-attachments/assets/f54045d7-2820-4fa0-a63b-a44bf0960ddd" />
+<img width="575" height="245" alt="Dashboard" src="https://github.com/user-attachments/assets/f54045d7-2820-4fa0-a63b-a44bf0960ddd" />
 
 
 ### Historical Data
 
-![Historical Graph]<img width="432" height="192" alt="Historical" src="https://github.com/user-attachments/assets/a2747011-fb08-4a8e-9be8-44c242e8c1c0" />
+<img width="432" height="192" alt="Historical" src="https://github.com/user-attachments/assets/a2747011-fb08-4a8e-9be8-44c242e8c1c0" />
 
 
 ---
@@ -408,7 +404,8 @@ The experimental implementation demonstrates successful integration of:
 
 # 🔄 System Sequence
 
-![Sequence Diagram](diagrams/sequence-diagram.png)
+<img width="666" height="338" alt="sys seq dia" src="https://github.com/user-attachments/assets/bc1e6436-7188-4527-b22e-bb446a99add0" />
+
 
 The sequence diagram represents the interaction between the:
 
@@ -428,7 +425,8 @@ User Dashboard
 
 # 📐 System Flowchart
 
-![System Flowchart](diagrams/flowchart.png)
+<img width="666" height="390" alt="sys op flowchart" src="https://github.com/user-attachments/assets/bfe822cb-dd75-4a35-8149-eb12b671031c" />
+
 
 The flowchart represents the firmware execution process from ESP32 initialization through sensor acquisition, Wi-Fi communication, data transmission, and continuous monitoring.
 
