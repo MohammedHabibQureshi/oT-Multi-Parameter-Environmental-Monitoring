@@ -2,6 +2,10 @@
 
 An **ESP32-based IoT environmental monitoring system** that collects multiple environmental parameters using DHT22, MQ135, and BMP280 sensors and uploads the measurements to the **ThingSpeak cloud platform** through Wi-Fi and HTTP for remote visualization and historical monitoring.
 
+### 🛠️ Tech Stack
+
+`ESP32` `DHT22` `MQ135` `BMP280` `Arduino IDE` `Wi-Fi` `HTTP` `ThingSpeak`
+
 ---
 
 ## 📌 Overview
@@ -46,7 +50,7 @@ The main objectives of this project are:
 
 # 🏗️ System Architecture
 
-<img width="1024" height="559" alt="sys archi" src="https://github.com/user-attachments/assets/67a52613-0351-4e7d-b0f4-1fec82bcdd3d" />
+![System Architecture](diagrams/system-architecture.png)
 
 
 ### System Architecture Flow
@@ -338,9 +342,9 @@ Data uploaded successfully
 
 The exact output depends on the firmware implementation.
 
-### Serial Monitor & Arduino IDE Output
+### Serial Monitor 
 
-<img width="576" height="405" alt="Serial monitor" src="https://github.com/user-attachments/assets/bc061944-a9dd-491f-a199-f82c8f9d6eb5" />
+![Serial Monitor](screenshots/serial-monitor.png)
 
 
 ---
@@ -781,8 +785,7 @@ IoT-Multi-Parameter-Environmental-Monitoring/
 │   └── historical-graph.png
 │
 └── documents/
-    ├── Project-Presentation.pptx
-    └── Patent-Document.docx
+    └── Project-Presentation.pptx
 ```
 
 ---
@@ -791,9 +794,9 @@ IoT-Multi-Parameter-Environmental-Monitoring/
 
 Additional project documentation is available in the `documents/` directory.
 
-### 📊 Project Presentation
+### 📊 Project Documentation
 
-[Project Presentation](https://github.com/user-attachments/files/31103929/Enivronmental-project.docx)
+[Project Documentation](https://github.com/user-attachments/files/31103929/Enivronmental-project.docx)
 
 
 ### 📑 Patent Documentation
