@@ -1,141 +1,134 @@
 # 🌍 IoT-Based Multi-Parameter Environmental Monitoring System
 
-An ESP32-based IoT system for **real-time environmental monitoring** using multiple sensors and cloud connectivity. The system measures **temperature, relative humidity, atmospheric pressure, and raw MQ135 air-quality sensor response**, then transmits the measurements over Wi-Fi to **ThingSpeak** for remote visualization and historical analysis.
+An **ESP32-based IoT environmental monitoring system** that collects multiple environmental parameters using DHT22, MQ135, and BMP280 sensors and uploads the measurements to the **ThingSpeak cloud platform** through Wi-Fi and HTTP for remote visualization and historical monitoring.
 
 ---
 
 ## 📌 Overview
 
-Environmental conditions continuously change and can be monitored using distributed sensing devices connected to the Internet of Things (IoT).
+Environmental conditions such as temperature, humidity, air-quality sensor response, and atmospheric pressure can change continuously.
 
-This project integrates an **ESP32 microcontroller**, **DHT22**, **MQ135**, and **BMP280** sensors into a compact environmental monitoring node.
+This project integrates multiple environmental sensors with an **ESP32 microcontroller** to create a compact IoT monitoring node.
 
-The ESP32 acquires sensor measurements, processes the readings, connects to a Wi-Fi network, and sends the collected data to the **ThingSpeak cloud platform using HTTP**.
-
-The uploaded measurements can then be visualized remotely through ThingSpeak dashboards and time-series graphs.
+The ESP32 collects sensor measurements, processes the readings, connects to a Wi-Fi network, and transmits the data to **ThingSpeak** using HTTP. The collected data can then be visualized remotely through ThingSpeak dashboards and historical time-series graphs.
 
 ### Parameters Monitored
 
 | Parameter | Sensor | Unit |
 |---|---|---|
-| Temperature | DHT22 | °C |
-| Relative Humidity | DHT22 | % |
-| Air-Quality Sensor Response | MQ135 | ADC |
-| Atmospheric Pressure | BMP280 | hPa |
+| 🌡️ Temperature | DHT22 | °C |
+| 💧 Relative Humidity | DHT22 | % |
+| 🌫️ MQ135 Raw Sensor Response | MQ135 | ADC |
+| 🌍 Atmospheric Pressure | BMP280 | hPa |
 
-> **Important:** The MQ135 implementation reports the sensor's **raw analog response**. It does **not** calculate calibrated gas concentrations in ppm. Accurate ppm estimation requires sensor-specific calibration and environmental compensation.
+> **Note:** The MQ135 value represents the sensor's raw analog response. The current implementation does **not** convert the reading into calibrated gas concentration values in ppm.
 
 ---
 
-## 🎯 Objectives
+# 🎯 Project Objectives
 
-The primary objectives of this project are:
+The main objectives of this project are:
 
-1. Monitor multiple environmental parameters using a single IoT node.
+1. Monitor multiple environmental parameters using a single IoT device.
 2. Measure temperature using the DHT22 sensor.
 3. Measure relative humidity using the DHT22 sensor.
 4. Acquire the raw analog response of the MQ135 sensor.
 5. Measure atmospheric pressure using the BMP280 sensor.
-6. Process sensor measurements using an ESP32.
+6. Process sensor measurements using an ESP32 microcontroller.
 7. Establish wireless connectivity using Wi-Fi.
-8. Transmit sensor data using HTTP.
-9. Store environmental measurements in the ThingSpeak cloud.
-10. Provide remote visualization of collected measurements.
-11. Maintain historical environmental data for analysis.
+8. Transmit environmental measurements using HTTP.
+9. Upload sensor data to the ThingSpeak cloud platform.
+10. Provide remote visualization of environmental measurements.
+11. Monitor historical environmental data using time-series graphs.
 12. Provide a modular architecture that can be extended with additional sensors.
 
 ---
 
 # 🏗️ System Architecture
 
+![System Architecture]<img width="1024" height="559" alt="sys archi" src="https://github.com/user-attachments/assets/67a52613-0351-4e7d-b0f4-1fec82bcdd3d" />
+
+
+### System Architecture Flow
+
 ```text
-                         ENVIRONMENT
-                              │
-             ┌────────────────┼────────────────┐
-             │                │                │
-             ▼                ▼                ▼
-          ┌───────┐       ┌───────┐       ┌────────┐
-          │ DHT22 │       │ MQ135 │       │ BMP280 │
-          └───┬───┘       └───┬───┘       └───┬────┘
-              │               │               │
-              └───────────────┼───────────────┘
-                              │
-                              ▼
-                       ┌─────────────┐
-                       │    ESP32    │
-                       │             │
-                       │ Sensor      │
-                       │ Acquisition │
-                       │ Processing  │
-                       │ Wi-Fi       │
-                       └──────┬──────┘
-                              │
-                         Wi-Fi / HTTP
-                              │
-                              ▼
-                       ┌─────────────┐
-                       │ ThingSpeak  │
-                       │    Cloud    │
-                       └──────┬──────┘
-                              │
-                              ▼
-                       ┌─────────────┐
-                       │   Dashboard │
-                       │             │
-                       │ Temperature │
-                       │ Humidity    │
-                       │ MQ135 ADC   │
-                       │ Pressure    │
-                       └─────────────┘
+                 ENVIRONMENT
+                     │
+        ┌────────────┼────────────┐
+        │            │            │
+      DHT22         MQ135       BMP280
+        │            │            │
+        └────────────┼────────────┘
+                     │
+                     ▼
+              ┌─────────────┐
+              │    ESP32    │
+              │             │
+              │ Sensor      │
+              │ Acquisition │
+              │ Processing  │
+              │ Wi-Fi       │
+              └──────┬──────┘
+                     │
+                  HTTP/Wi-Fi
+                     │
+                     ▼
+              ┌─────────────┐
+              │ ThingSpeak  │
+              │    Cloud    │
+              └──────┬──────┘
+                     │
+                     ▼
+              ┌─────────────┐
+              │  Dashboard  │
+              │             │
+              │ Temperature │
+              │ Humidity    │
+              │ MQ135 ADC   │
+              │ Pressure    │
+              └─────────────┘
 ```
 
 ---
 
-# 🔄 End-to-End Data Flow
+# 🔄 Data Flow
 
-The complete sensing-to-cloud pipeline is:
+The complete data pathway is:
 
 ```text
 Environmental Conditions
-          │
-          ▼
+          ↓
        Sensors
-          │
-          ▼
+          ↓
         ESP32
-          │
-          ├── Sensor Acquisition
-          ├── Data Processing
-          └── Wi-Fi Communication
-          │
-          ▼
+          ↓
+   Sensor Processing
+          ↓
+      Wi-Fi Network
+          ↓
       HTTP Request
-          │
-          ▼
+          ↓
       ThingSpeak
-          │
-          ├── Cloud Storage
-          └── Time-Series Data
-          │
-          ▼
+          ↓
+   Cloud Data Storage
+          ↓
    ThingSpeak Dashboard
-          │
-          ▼
-   Remote Visualization
+          ↓
+   Remote Monitoring
 ```
 
 ### Data Flow Explanation
 
-1. The sensors interact with the surrounding environment.
-2. The DHT22 provides temperature and relative humidity.
-3. The MQ135 produces an analog sensor response.
+1. Environmental conditions are detected by the connected sensors.
+2. The DHT22 measures temperature and relative humidity.
+3. The MQ135 produces a raw analog sensor response.
 4. The BMP280 measures atmospheric pressure.
-5. The ESP32 reads and processes the sensor outputs.
+5. The ESP32 reads and processes the sensor measurements.
 6. The ESP32 connects to the configured Wi-Fi network.
-7. Sensor values are sent to ThingSpeak using HTTP.
-8. ThingSpeak stores the received measurements.
-9. The ThingSpeak dashboard displays the measurements.
-10. Historical readings can be analyzed using time-series graphs.
+7. The measurements are transmitted to ThingSpeak through HTTP.
+8. ThingSpeak receives and stores the measurements.
+9. The ThingSpeak dashboard displays the collected data.
+10. Historical measurements can be viewed using time-series graphs.
 
 ---
 
@@ -157,10 +150,10 @@ Environmental Conditions
 
 | Technology | Purpose |
 |---|---|
-| **Arduino IDE** | Firmware development and ESP32 programming |
-| **Embedded C/C++** | Firmware implementation |
+| **Arduino IDE** | Firmware development and upload |
+| **Embedded C/C++** | ESP32 firmware |
 | **ESP32 Arduino Core** | ESP32 development support |
-| **Wi-Fi** | Wireless communication |
+| **Wi-Fi** | Wireless connectivity |
 | **HTTP** | Cloud data transmission |
 | **ThingSpeak** | Cloud storage and visualization |
 
@@ -170,55 +163,54 @@ Environmental Conditions
 
 ## DHT22
 
-The DHT22 is a digital environmental sensor used to measure:
+The **DHT22** is a digital environmental sensor used to measure:
 
 - 🌡️ Temperature
 - 💧 Relative humidity
 
-The ESP32 reads both values from the sensor and uploads them to ThingSpeak.
+The ESP32 reads both parameters and uploads them to ThingSpeak.
 
 ---
 
 ## 🌫️ MQ135
 
-The MQ135 is an analog gas/air-quality sensing module.
+The **MQ135** is an analog gas/air-quality sensing module.
 
-In the current implementation, the project records:
+In this project, the sensor output is recorded as:
 
 > **Raw MQ135 ADC response**
 
-The value is treated as a relative sensor response rather than a calibrated gas concentration.
+The current implementation does not directly calculate gas concentration in ppm.
 
-### Why raw ADC?
+### Why Raw ADC?
 
-The relationship between MQ135 sensor output and gas concentration depends on factors such as:
+MQ135 readings depend on several factors, including:
 
 - Sensor calibration
 - Sensor preheating
 - Load resistance
 - Environmental conditions
 - Gas composition
+- Sensor characteristics
 - Sensor aging
 
-Therefore, the current implementation does not claim to provide direct ppm measurements.
+Therefore, a calibrated MQ135 implementation would be required for quantitative gas concentration measurements.
 
 ---
 
 ## 🌍 BMP280
 
-The BMP280 is a digital pressure sensor used to measure:
-
-- Atmospheric pressure
+The **BMP280** is a digital pressure sensor used to measure atmospheric pressure.
 
 The pressure measurement is reported in:
 
-**hPa (hectopascals)**
+**hPa — hectopascals**
 
 ---
 
 # 🔌 Hardware Connections
 
-The sensor connections should match the GPIO definitions used in the Arduino firmware.
+The following represents the sensor connection arrangement used by the prototype.
 
 ## DHT22
 
@@ -248,216 +240,238 @@ BMP280
 └── SCL  → ESP32 SCL
 ```
 
-> ⚠️ **Important:** Replace the generic GPIO labels above with the exact pins used by your hardware implementation before treating this README as the final hardware reference.
+> ⚠️ **Important:** The GPIO numbers should match the actual pins defined in `IoT_Multi_Parameter_Environmental_Monitoring.ino`.
 
 ---
 
-# ☁️ ThingSpeak Configuration
+# 🔗 Hardware Block Diagram
 
-The ThingSpeak channel uses four fields:
+![Hardware Block Diagram]<img width="576" height="391" alt="hardware" src="https://github.com/user-attachments/assets/cf922f65-5a4c-4ea8-8d2a-76df520b60c4" />
 
-| Field | Parameter | Unit |
-|---|---|---|
-| Field 1 | Temperature | °C |
-| Field 2 | Relative Humidity | % |
-| Field 3 | MQ135 Raw Response | ADC |
-| Field 4 | Atmospheric Pressure | hPa |
 
-Example data mapping:
+The hardware block diagram represents the connection between the environmental sensors and the ESP32 processing unit.
 
-```text
-ThingSpeak Field 1 → Temperature
-ThingSpeak Field 2 → Humidity
-ThingSpeak Field 3 → MQ135 ADC
-ThingSpeak Field 4 → Pressure
-```
+The ESP32 acts as the central controller responsible for:
+
+- Sensor interfacing
+- Data acquisition
+- Data processing
+- Wi-Fi communication
+- Cloud data transmission
 
 ---
 
 # ⚙️ Working Principle
 
-The system operates according to the following sequence:
+The system operates through the following sequence:
 
 ```text
 1. ESP32 Power-On
-       ↓
+        ↓
 2. Initialize Sensors
-       ↓
+        ↓
 3. Connect to Wi-Fi
-       ↓
+        ↓
 4. Read DHT22
-       ↓
+        ↓
 5. Read MQ135
-       ↓
+        ↓
 6. Read BMP280
-       ↓
-7. Process Sensor Values
-       ↓
-8. Build HTTP Request
-       ↓
+        ↓
+7. Process Sensor Measurements
+        ↓
+8. Prepare HTTP Request
+        ↓
 9. Send Data to ThingSpeak
-       ↓
+        ↓
 10. ThingSpeak Stores Data
-       ↓
+        ↓
 11. Dashboard Displays Data
-       ↓
+        ↓
 12. Repeat Monitoring Cycle
 ```
 
-The monitoring cycle continues periodically while the ESP32 remains powered and connected to the network.
+The monitoring process continues periodically while the ESP32 remains powered and connected to the network.
 
 ---
 
-# 📊 Experimental Results
+# 📊 ThingSpeak Configuration
 
-The prototype demonstrates the complete:
+The ThingSpeak channel is configured using four fields.
 
-**Sensor → ESP32 → Wi-Fi → HTTP → Cloud → Dashboard**
+| Field | Parameter | Unit |
+|---|---|---|
+| **Field 1** | Temperature | °C |
+| **Field 2** | Relative Humidity | % |
+| **Field 3** | MQ135 Raw Response | ADC |
+| **Field 4** | Atmospheric Pressure | hPa |
 
-pipeline.
-
-## Environmental Measurements
-
-The system produces measurements for:
-
-- Temperature
-- Relative humidity
-- MQ135 raw response
-- Atmospheric pressure
-
-### Temperature
-
-Add the measured temperature graph or screenshot here.
+### ThingSpeak Data Mapping
 
 ```text
-screenshots/results/temperature.png
-```
-
-### Relative Humidity
-
-Add the measured humidity graph or screenshot here.
-
-```text
-screenshots/results/humidity.png
-```
-
-### MQ135 Raw Response
-
-Add the MQ135 response graph or screenshot here.
-
-```text
-screenshots/results/mq135.png
-```
-
-### Atmospheric Pressure
-
-Add the measured pressure graph or screenshot here.
-
-```text
-screenshots/results/pressure.png
+Field 1 → Temperature
+Field 2 → Relative Humidity
+Field 3 → MQ135 Raw Response
+Field 4 → Atmospheric Pressure
 ```
 
 ---
 
-# 🖥️ Arduino IDE / Serial Monitor
+# 🖥️ Arduino IDE Output
 
 The ESP32 provides local monitoring through the Arduino IDE Serial Monitor.
 
-Typical output may include:
+Typical output may look similar to:
 
 ```text
 Connecting to WiFi...
 WiFi connected
-IP Address: xxx.xxx.xxx.xxx
 
-Temperature: xx.xx °C
-Humidity: xx.xx %
-MQ135: xxxx
-Pressure: xxxx.xx hPa
+Temperature: XX.XX °C
+Humidity: XX.XX %
+MQ135: XXXX
+Pressure: XXXX.XX hPa
 
 Sending data to ThingSpeak...
 Data uploaded successfully
 ```
 
-> The exact output depends on the implementation in the `.ino` firmware.
+The exact output depends on the firmware implementation.
 
-### Serial Monitor Screenshot
+### Serial Monitor
 
-Add the actual screenshot:
+![Serial Monitor]<img width="576" height="405" alt="Serial monitor" src="https://github.com/user-attachments/assets/bc061944-a9dd-491f-a199-f82c8f9d6eb5" />
 
-```text
-screenshots/<img width="576" height="405" alt="Serial monitor" src="https://github.com/user-attachments/assets/cb6c3acc-d7b6-4783-b36b-2e55e7c2ed8d" />
 
-```
+### Arduino IDE Output
+
+![Arduino IDE Output]
 
 ---
 
-# 📈 ThingSpeak Dashboard
+# ☁️ ThingSpeak Dashboard
 
-ThingSpeak provides remote visualization of the environmental measurements.
+ThingSpeak provides remote visualization of the environmental measurements collected by the ESP32.
 
-The dashboard can display:
+The dashboard can be used to monitor:
 
-- Temperature trends
-- Humidity trends
-- MQ135 sensor response
-- Atmospheric pressure trends
-- Historical time-series measurements
+- 🌡️ Temperature
+- 💧 Relative humidity
+- 🌫️ MQ135 raw response
+- 🌍 Atmospheric pressure
 
-### Dashboard
+### ThingSpeak Dashboard
 
-Add the actual ThingSpeak dashboard screenshot:
+![ThingSpeak Dashboard]<img width="575" height="245" alt="Dashboard" src="https://github.com/user-attachments/assets/f54045d7-2820-4fa0-a63b-a44bf0960ddd" />
 
-```text
-screenshots/<img width="575" height="245" alt="Dashboard" src="https://github.com/user-attachments/assets/6fb93751-1133-4b49-bd27-869baf23a779" />
-
-```
 
 ### Historical Data
 
-Add the historical graph screenshot:
+![Historical Graph]<img width="432" height="192" alt="Historical" src="https://github.com/user-attachments/assets/a2747011-fb08-4a8e-9be8-44c242e8c1c0" />
+
+
+---
+
+# 📈 Experimental Results
+
+The implemented prototype demonstrates the complete sensing-to-cloud data pathway:
 
 ```text
-screenshots/<img width="432" height="192" alt="Historical" src="https://github.com/user-attachments/assets/67aff168-d9c5-43ad-b79f-0a8da6aebc1a" />
+Environmental Sensing
+        ↓
+ESP32 Data Acquisition
+        ↓
+Sensor Processing
+        ↓
+Wi-Fi Communication
+        ↓
+HTTP Data Transmission
+        ↓
+ThingSpeak Cloud
+        ↓
+Graphical Visualization
+        ↓
+Historical Monitoring
+```
 
+The experimental implementation demonstrates successful integration of:
+
+- Multi-sensor environmental data acquisition
+- ESP32 processing
+- Wi-Fi communication
+- HTTP-based cloud transmission
+- ThingSpeak cloud storage
+- Remote visualization
+- Historical data monitoring
+
+---
+
+# 🔄 System Sequence
+
+![Sequence Diagram](diagrams/sequence-diagram.png)
+
+The sequence diagram represents the interaction between the:
+
+```text
+Sensors
+   ↓
+ESP32
+   ↓
+Wi-Fi Network
+   ↓
+ThingSpeak
+   ↓
+User Dashboard
 ```
 
 ---
 
-# 📐 System Diagrams
+# 📐 System Flowchart
 
-The repository contains the following engineering diagrams:
+![System Flowchart](diagrams/flowchart.png)
 
-| Diagram | Description |
-|---|---|
-| **System Architecture** | Overall system architecture |
-| **Hardware Block Diagram** | Hardware components and connections |
-| **Software Architecture** | Firmware and cloud software flow |
-| **Flowchart** | Program execution flow |
-| **Sequence Diagram** | Interaction between system components |
-| **Deployment Diagram** | Physical/software deployment structure |
-
-Recommended diagram files:
-
-```text
-diagrams/
-├── system-architecture.png
-├── hardware-block-diagram.png
-├── software-architecture.png
-├── flowchart.png
-├── sequence-diagram.png
-└── deployment-diagram.png
-```
+The flowchart represents the firmware execution process from ESP32 initialization through sensor acquisition, Wi-Fi communication, data transmission, and continuous monitoring.
 
 ---
 
-# 📚 Required Arduino Libraries
+# 💾 Source Code
 
-Install the following libraries through the Arduino IDE Library Manager:
+The main Arduino firmware is:
 
-- **DHT sensor library**
-- **Adafruit Unified Sensor**
-- **Adafruit BMP280 Library**
+```text
+IoT_Multi_Parameter_Environmental_Monitoring.ino
+```
+
+The program performs:
+
+- Sensor initialization
+- DHT22 temperature measurement
+- DHT22 humidity measurement
+- MQ135 analog reading
+- BMP280 pressure measurement
+- Wi-Fi connection
+- HTTP communication
+- ThingSpeak data upload
+- Serial Monitor output
+
+---
+
+# 📚 Required Libraries
+
+The following Arduino libraries are required:
+
+### DHT22
+
+```text
+DHT sensor library
+Adafruit Unified Sensor
+```
+
+### BMP280
+
+```text
+Adafruit BMP280 Library
+```
 
 The ESP32 Arduino Core provides the required functionality for:
 
@@ -481,23 +495,11 @@ Open:
 
 ```text
 Arduino IDE
-        ↓
-File
-        ↓
-Preferences
-        ↓
-Additional Boards Manager URLs
-```
-
-Add the appropriate ESP32 board package URL.
-
-Then open:
-
-```text
+    ↓
 Tools
-   ↓
+    ↓
 Board
-   ↓
+    ↓
 Boards Manager
 ```
 
@@ -517,7 +519,7 @@ Open:
 
 ```text
 Arduino IDE
-      ↓
+    ↓
 Library Manager
 ```
 
@@ -533,7 +535,7 @@ Adafruit BMP280 Library
 
 ## 4. Connect the Hardware
 
-Connect:
+Connect the:
 
 ```text
 DHT22
@@ -544,7 +546,7 @@ BMP280
 ESP32
 ```
 
-Verify that the GPIO definitions in the firmware match the actual hardware wiring.
+Make sure the GPIO definitions in the Arduino program match your physical connections.
 
 ---
 
@@ -556,17 +558,22 @@ Open:
 IoT_Multi_Parameter_Environmental_Monitoring.ino
 ```
 
-Configure the Wi-Fi credentials required by the firmware.
+Enter your Wi-Fi credentials according to the variables used in the program.
 
-> 🔐 **Security:** Do not commit your real Wi-Fi password to GitHub.
+For example:
 
-A safer approach is to keep credentials in a separate configuration file that is excluded using `.gitignore`.
+```cpp
+const char* ssid = "YOUR_WIFI_NAME";
+const char* password = "YOUR_WIFI_PASSWORD";
+```
+
+> 🔐 **Security:** Never commit your real Wi-Fi password to a public GitHub repository.
 
 ---
 
 ## 6. Configure ThingSpeak
 
-Create a ThingSpeak channel with four fields:
+Create a ThingSpeak channel and configure four fields:
 
 ```text
 Field 1 → Temperature
@@ -577,17 +584,17 @@ Field 4 → Atmospheric Pressure
 
 ---
 
-## 7. Add ThingSpeak API Credentials
+## 7. Configure the ThingSpeak API Key
 
-Configure the ThingSpeak Write API Key in the firmware.
+Add your ThingSpeak Write API Key to the Arduino program.
 
-> 🔐 **Security:** Do not publish your actual ThingSpeak Write API Key in a public GitHub repository.
-
-Use a placeholder such as:
+For example:
 
 ```cpp
-const char* WRITE_API_KEY = "YOUR_THINGSPEAK_WRITE_API_KEY";
+const char* writeAPIKey = "YOUR_THINGSPEAK_WRITE_API_KEY";
 ```
+
+> 🔐 **Security:** Never publish your real ThingSpeak Write API Key in a public repository.
 
 ---
 
@@ -597,11 +604,11 @@ In Arduino IDE:
 
 ```text
 Tools
-   ↓
+    ↓
 Board
-   ↓
+    ↓
 ESP32
-   ↓
+    ↓
 Select your ESP32 board
 ```
 
@@ -609,13 +616,15 @@ Select your ESP32 board
 
 ## 9. Select the COM Port
 
-Connect the ESP32 using USB and select the corresponding serial port:
+Connect the ESP32 to your computer using USB.
+
+Then select:
 
 ```text
 Tools
-   ↓
+    ↓
 Port
-   ↓
+    ↓
 COMx
 ```
 
@@ -629,7 +638,7 @@ Open:
 IoT_Multi_Parameter_Environmental_Monitoring.ino
 ```
 
-Compile and upload the firmware to the ESP32.
+Compile and upload the program to the ESP32.
 
 ---
 
@@ -639,7 +648,7 @@ Open:
 
 ```text
 Tools
-   ↓
+    ↓
 Serial Monitor
 ```
 
@@ -652,16 +661,15 @@ Set the baud rate to:
 Verify:
 
 - Wi-Fi connection
-- Sensor initialization
-- Sensor measurements
-- HTTP transmission
-- ThingSpeak response
+- Sensor readings
+- HTTP communication
+- ThingSpeak upload status
 
 ---
 
 ## 12. Verify ThingSpeak Data
 
-Open your ThingSpeak channel and verify that all four fields are receiving data.
+Open your ThingSpeak channel and verify that the four fields are receiving data.
 
 The expected pipeline is:
 
@@ -676,8 +684,80 @@ ThingSpeak
   ↓
 Fields 1–4
   ↓
-Charts
+Graphs
 ```
+
+---
+
+# 🔐 Security Considerations
+
+This project uses network and cloud credentials.
+
+Never upload the following information to a public GitHub repository:
+
+```text
+Wi-Fi Password
+ThingSpeak Write API Key
+Private API Credentials
+```
+
+Use placeholders in the public source code:
+
+```cpp
+const char* ssid = "YOUR_WIFI_NAME";
+const char* password = "YOUR_WIFI_PASSWORD";
+const char* writeAPIKey = "YOUR_THINGSPEAK_WRITE_API_KEY";
+```
+
+For a production implementation, additional security mechanisms such as secure credential storage, authenticated communication, and appropriate encrypted transport should be considered.
+
+---
+
+# ⚠️ Limitations
+
+The current implementation has the following limitations:
+
+1. The MQ135 output is represented as a **raw ADC response** rather than a calibrated gas concentration.
+2. MQ135 quantitative gas measurement would require proper calibration.
+3. The prototype currently uses a single ESP32 monitoring node.
+4. Cloud transmission depends on Wi-Fi availability.
+5. ThingSpeak is used as the cloud monitoring platform.
+6. Sensor readings depend on sensor characteristics and calibration.
+7. The current system does not implement automated alerts.
+8. The system is intended as an IoT prototype rather than a certified environmental measurement instrument.
+
+---
+
+# 🚀 Future Scope
+
+The system can be extended with:
+
+### Hardware
+
+- Additional environmental sensors
+- CO₂ sensors
+- PM2.5 / PM10 sensors
+- Light-intensity sensors
+- Multiple ESP32 monitoring nodes
+- Improved sensor calibration
+
+### Software
+
+- Mobile application
+- Web-based monitoring dashboard
+- Automated environmental alerts
+- Advanced data analytics
+- Predictive environmental monitoring
+- Machine-learning-based anomaly detection
+
+### IoT
+
+- MQTT communication
+- Multi-node IoT architecture
+- Low-power operation
+- ESP32 deep-sleep functionality
+- Edge computing
+- Alternative cloud platforms
 
 ---
 
@@ -692,10 +772,9 @@ IoT-Multi-Parameter-Environmental-Monitoring/
 │
 ├── diagrams/
 │   ├── system-architecture.png
-│   ├── hardware-block-diagram.png<img width="432" height="192" alt="Historical" src="https://github.com/user-attachments/assets/c8e11643-ef89-467b-9e86-ba7c977073f1" />
-
+│   ├── hardware-block-diagram.png
 │   ├── flowchart.png
-│   ├── sequence-diagram.png
+│   └── sequence-diagram.png
 │
 ├── screenshots/
 │   ├── arduino-output.png
@@ -710,172 +789,62 @@ IoT-Multi-Parameter-Environmental-Monitoring/
 
 ---
 
-# 💾 Source Code
-
-The main firmware is:
-
-```text
-IoT_Multi_Parameter_Environmental_Monitoring.ino
-```
-
-The firmware is responsible for:
-
-- Sensor initialization
-- DHT22 temperature measurement
-- DHT22 humidity measurement
-- MQ135 analog acquisition
-- BMP280 pressure measurement
-- Wi-Fi connection
-- HTTP communication
-- ThingSpeak data transmission
-- Serial monitoring
-
----
-
 # 📄 Project Documentation
 
 Additional project documentation is available in the `documents/` directory.
 
-### 📊 Project Documentation
+### 📊 Project Presentation
 
-[Project Documents](https://github.com/user-attachments/files/31103707/Enivronmental-project.docx)
+[Project Presentation](https://github.com/user-attachments/files/31103929/Enivronmental-project.docx)
 
-
-### 📄 Project Report
-
-[Project Report](documents/Project-Report.docx)
 
 ### 📑 Patent Documentation
 
-[Patent Documentation](https://github.com/user-attachments/files/31103252/Environmental_patent_paper.docx)
+[Patent Documentation](https://github.com/user-attachments/files/31103922/Environmental_patent_paper.docx)
 
-> **Note:** If the patent has not been officially filed or granted, describe this as **project patent documentation** rather than claiming that the project has an issued patent.
 
----
-
-# 🔬 Experimental Implementation
-
-The prototype was implemented using:
-
-- ESP32 development board
-- DHT22 temperature and humidity sensor
-- MQ135 air-quality sensing module
-- BMP280 atmospheric pressure sensor
-- Wi-Fi network
-- ThingSpeak cloud platform
-
-The implementation demonstrates the complete IoT pipeline:
-
-```text
-Physical Environment
-        ↓
-Environmental Sensors
-        ↓
-ESP32 Edge Device
-        ↓
-Wi-Fi Connectivity
-        ↓
-HTTP Communication
-        ↓
-ThingSpeak Cloud
-        ↓
-Data Storage
-        ↓
-Visualization
-```
+> **Note:** If the patent has not been officially filed or granted, refer to this document as **patent documentation** rather than claiming that the project has an issued patent.
 
 ---
 
-# ⚠️ Limitations
-
-The current implementation has the following limitations:
-
-1. **MQ135 provides raw sensor response rather than calibrated ppm values.**
-2. The system currently uses a single ESP32 monitoring node.
-3. Cloud transmission depends on Wi-Fi availability.
-4. ThingSpeak is used as the cloud monitoring platform.
-5. Sensor accuracy depends on sensor characteristics and calibration.
-6. The MQ135 requires appropriate calibration for quantitative gas concentration measurement.
-7. The prototype does not currently implement automated environmental alerts.
-8. The system is not designed as a certified environmental measurement instrument.
-
----
-
-# 🚀 Future Scope
-
-The system can be extended with:
-
-### Hardware Improvements
-
-- Additional environmental sensors
-- CO₂-specific sensors
-- PM2.5 / PM10 particulate sensors
-- Light intensity sensors
-- Soil/environmental sensors
-- Multiple ESP32 monitoring nodes
-
-### Software Improvements
-
-- Automated environmental alerts
-- Mobile application
-- Web-based monitoring dashboard
-- Advanced data analytics
-- Predictive environmental monitoring
-- Machine-learning-based anomaly detection
-- Sensor calibration and compensation
-- Data export and reporting
-
-### IoT Improvements
-
-- MQTT communication
-- Multi-node IoT architecture
-- Low-power operation
-- Deep-sleep support
-- Alternative cloud platforms
-- Edge computing
-
----
-
-# 🔐 Security Considerations
-
-Because the project connects an embedded device to a cloud service, credentials should be handled carefully.
-
-Never commit the following to a public GitHub repository:
-
-```text
-Wi-Fi Password
-ThingSpeak Write API Key
-Private API Credentials
-Private Configuration Files
-```
-
-Recommended approach:
-
-```text
-Firmware
-   │
-   ├── Public source code
-   │
-   └── Private configuration
-            │
-            └── Excluded using .gitignore
-```
-
-For a production deployment, additional security mechanisms such as secure credential storage, encrypted communication, device authentication, and certificate validation should be considered.
-
----
-
-# 📜 Project / Patent Documentation
+# 📜 Patent Documentation
 
 The project has been documented under the title:
 
 **IoT-Based Multi-Parameter Environmental Monitoring System with Cloud-Enabled Remote Visualization**
 
-The associated documentation is available in:
+The associated document is available at:
 
 ```text
 documents/Patent-Document.docx
 ```
+
+---
+
+# ⭐ Project Highlights
+
+- ✅ ESP32-based IoT environmental monitoring
+- ✅ Multi-parameter environmental sensing
+- ✅ DHT22 temperature monitoring
+- ✅ DHT22 humidity monitoring
+- ✅ MQ135 raw air-quality sensor response
+- ✅ BMP280 atmospheric pressure monitoring
+- ✅ Wi-Fi connectivity
+- ✅ HTTP communication
+- ✅ ThingSpeak cloud integration
+- ✅ Remote dashboard visualization
+- ✅ Historical data visualization
+- ✅ Modular sensor architecture
+- ✅ Low-cost IoT prototype
+- ✅ Cloud-connected environmental monitoring
+
+---
+
+# 👨‍💻 Author
+
+**Mohammed Habib Qureshi**
+
+Internet of Things
 
 ---
 
@@ -901,55 +870,36 @@ documents/Patent-Document.docx
 
 ---
 
-# ⭐ Project Highlights
+## ⭐ Final Project Summary
 
-- ✅ ESP32-based IoT environmental monitoring
-- ✅ Multi-parameter environmental sensing
-- ✅ DHT22 temperature monitoring
-- ✅ DHT22 humidity monitoring
-- ✅ MQ135 raw air-quality sensor response
-- ✅ BMP280 atmospheric pressure monitoring
-- ✅ Wi-Fi connectivity
-- ✅ HTTP cloud communication
-- ✅ ThingSpeak integration
-- ✅ Remote dashboard visualization
-- ✅ Historical data visualization
-- ✅ Modular sensor architecture
-- ✅ Low-cost IoT prototype
-- ✅ Cloud-connected environmental monitoring
-
----
-
-# 👨‍💻 Author
-
-**Mohammed Habib Qureshi**
-
-Internet of Things Student
-
----
-
-## 📌 Project Summary
-
-This project demonstrates how an ESP32 can act as an IoT edge device that collects environmental measurements from multiple sensors and transmits them to a cloud platform for remote monitoring.
-
-The complete system can be summarized as:
+This project demonstrates a complete **IoT-based environmental monitoring pipeline** in which an ESP32 collects measurements from multiple environmental sensors and transmits the data to a cloud platform for remote visualization.
 
 ```text
-Sensors
-   ↓
-ESP32
-   ↓
-Wi-Fi
-   ↓
-HTTP
-   ↓
-ThingSpeak
-   ↓
-Cloud Storage
-   ↓
-Dashboard
-   ↓
-Remote Environmental Monitoring
+┌──────────────┐
+│ Environmental│
+│   Sensors    │
+└──────┬───────┘
+       │
+       ▼
+┌──────────────┐
+│    ESP32     │
+│ Data         │
+│ Acquisition  │
+│ Processing   │
+└──────┬───────┘
+       │
+       │ Wi-Fi / HTTP
+       ▼
+┌──────────────┐
+│  ThingSpeak  │
+│    Cloud     │
+└──────┬───────┘
+       │
+       ▼
+┌──────────────┐
+│  Dashboard   │
+│ Visualization│
+└──────────────┘
 ```
 
-The architecture provides a foundation for developing more advanced environmental monitoring systems with **multi-node sensing, edge analytics, machine learning, alerts, mobile applications, and predictive environmental analysis**.
+The architecture provides a foundation for future development involving **multi-node environmental monitoring, edge computing, machine learning, predictive analytics, automated alerts, mobile applications, and advanced IoT architectures**.
